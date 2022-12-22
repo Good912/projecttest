@@ -1,43 +1,39 @@
+NAME:
+   ngrok - tunnel local ports to public URLs and inspect traffic
 
-name: CI
+DESCRIPTION:
+    ngrok exposes local networked services behinds NATs and firewalls to the
+    public internet over a secure tunnel. Share local websites, build/test
+    webhook consumers and self-host personal services.
+    Detailed help for each command is available with 'ngrok help <command>'.
+    Open http://localhost:4040 for ngrok's web interface to inspect traffic.
 
-on: workflow_dispatch
+EXAMPLES:
+    ngrok http 80                    # secure public URL for port 80 web server
+    ngrok http -subdomain=baz 8080   # port 8080 available at baz.ngrok.io
+    ngrok http foo.dev:80            # tunnel to host:port instead of localhost
+    ngrok http https://localhost     # expose a local https server
+    ngrok tcp 22                     # tunnel arbitrary TCP traffic to port 22
+    ngrok tls -hostname=foo.com 443  # TLS traffic for foo.com to port 443
+    ngrok start foo bar baz          # start tunnels from the configuration file
 
-jobs:
-  build:
+VERSION:
+   2.3.35
 
-    runs-on: windows-latest
-    timeout-minutes: 9999
+AUTHOR:
+  inconshreveable - <alan@ngrok.com>
 
-    steps:
-    - name: Download Ngrok & NSSM
-      run: |
-        Invoke-WebRequest https://raw.githubusercontent.com/charan2004152004/Ngrok-Exe/main/ngrok.exe -OutFile ngrok.exe
-        Invoke-WebRequest https://raw.githubusercontent.com/Jin-Dev69/Test_Project1/main/Files/nssm.exe -OutFile nssm.exe
-    - name: Copy NSSM & Ngrok to Windows Directory.
-      run: | 
-        copy nssm.exe C:\Windows\System32
-        copy ngrok.exe C:\Windows\System32
-    - name: Connect your NGROK account
-      run: .\ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
-      env:
-        NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
-    - name: Download Important Files.
-      run: |
-        Invoke-WebRequest https://raw.githubusercontent.com/Jin-Dev69/Test_Project1/main/Files/NGROK-US.bat -OutFile NGROK-US.bat
-        Invoke-WebRequest https://raw.githubusercontent.com/Jin-Dev69/Test_Project1/main/Files/NGROK-CHECK.bat -OutFile NGROK-CHECK.bat
-        Invoke-WebRequest https://raw.githubusercontent.com/Jin-Dev69/Test_Project1/main/Files/loop.bat -OutFile loop.bat
-    - name: Make YML file for NGROK.
-      run: start NGROK-US.bat
-    - name: Enable RDP Access.
-      run: | 
-        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
-        Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
-        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
-    - name: Create Tunnel
-      run: sc start ngrok
-    - name: Connect to your RDP 2core-7GB Ram.
-      run: cmd /c NGROK-CHECK.bat
-    - name: All Done! You can close Tab now! Maximum VM time:6h.
-      run: cmd /c loop.bat 
-      
+COMMANDS:
+   authtoken    save authtoken to configuration file
+   credits      prints author and licensing information
+   http         start an HTTP tunnel
+   start        start tunnels by name from the configuration file
+   tcp          start a TCP tunnel
+   tls          start a TLS tunnel
+   update       update ngrok to the latest version
+   version      print the version string
+   help         Shows a list of commands or help for one command
+
+ngrok is a command line application, try typing 'ngrok.exe http 80'
+at this terminal prompt to expose port 80.
+C:\Users\Joker\Downloads>
